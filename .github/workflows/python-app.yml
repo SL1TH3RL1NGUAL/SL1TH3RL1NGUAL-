@@ -1,0 +1,390 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        pytest
+
+            - name: Setup Node.js environment
+  uses: actions/setup-node@v6.1.0
+  with:
+    # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
+    node-version: # optional
+    # File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions.
+    node-version-file: # optional
+    # Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.
+    architecture: # optional
+    # Set this option if you want the action to check for the latest available version that satisfies the version spec.
+    check-latest: # optional
+    # Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN.
+    registry-url: # optional
+    # Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/).
+    scope: # optional
+    # Used to pull node distributions from node-versions. Since there's a default, this is typically not supplied by the user. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
+    token: # optional, default is ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm.
+    cache: # optional
+    # Set to false to disable automatic caching. By default, caching is enabled when either devEngines.packageManager or the top-level packageManager field in package.json specifies npm as the package manager.
+    package-manager-cache: # optional, default is true
+    # Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.
+    cache-dependency-path: # optional
+    # Used to specify an alternative mirror to downlooad Node.js binaries from
+    mirror: # optional
+    # The token used as Authorization header when fetching from the mirror
+    mirror-token: # optional
+
+          jobs:
+  test:
+    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node_version: ['18.x', '20.x']
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node_version }}
+
+    - name: npm install, build and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm test
+
+                    - name: insta-integration - Integration Testing
+  # You may pin to the exact commit or the version.
+  # uses: data-catering/insta-integration@3c538bc90d49950396ba3f88022cde69ca986e6c
+  uses: data-catering/insta-integration@v6
+  with:
+    # File path to configuration file.
+    configuration_file: # optional, default is insta-integration.yaml
+    # Folder path to use for execution files.
+    base_folder: # optional, default is /home/runner/work
+    # Version of data-caterer Docker image
+    data_caterer_version: # optional, default is 0.17.3
+          
+            - name: Crust IPFS Pin
+  # You may pin to the exact commit or the version.
+  # uses: crustio/ipfs-crust-action@18f5ab4e8496351cfaca10a55ced7119cb0fe677
+  uses: crustio/ipfs-crust-action@v2.0.6
+  with:
+    # IPFS cid which should be provided to Crust
+    cid: 
+    # IPFS size which should be provided to Crust
+    size: # optional, default is 209715200
+    # Crust secret seeds(12 words)
+    seeds: 
+    # Crust Chain websocket endpoint
+    crust-endpoint: # optional, default is wss://rpc.crust.network
+    # IPFS public gateway provides api/ function
+    ipfs-gateway: # optional, default is https://ipfs.io
+
+                      - name: Endor Labs Scan
+  # You may pin to the exact commit or the version.
+  # uses: endorlabs/github-action@a8ac7b44747fcbe98d0e80ab2d4e91f7ab9028fa
+  uses: endorlabs/github-action@v1.1.3
+  with:
+    # "Use this to add custom arguments to the endorctl command."
+    additional_args: # optional
+    # "Set to the Endor Labs API to use."
+    api: # optional, default is https://api.endorlabs.com
+    # "Set the API key used to authenticate with Endor Labs".
+    api_key: # optional
+    # "Set the secret corresponding to the API key used to authenticate with Endor Labs."
+    api_secret: # optional
+    # 
+    ci_run: # optional, default is true
+    # 
+    ci_run_tags: # optional
+    # "Set to `false` if you prefer to use another form of authentication over GitHub action OIDC tokens."
+    enable_github_action_token: # optional, default is true
+    # "Set to `true` to publish new findings as review comments. Must be used together with `pr` and `github_token`.  Additionally, the `issues: write` and `pull-requests: write` permissions must be set in the workflow."
+    enable_pr_comments: # optional
+    # "Set to the checksum associated with a pinned version of endorctl."
+    endorctl_checksum: # optional
+    # "Set to a version of endorctl to pin this specific version for use. Defaults to the latest version."
+    endorctl_version: # optional
+    # "Set to `false` to disable the json scan result artifact export."
+    export_scan_result_artifact: # optional, default is true
+    # "Set the target service account for GCP based authentication. GCP authentication is only enabled if this flag is set.  Cannot be used with `api_key`."
+    gcp_service_account: # optional
+    # "Set the token used to authenticate with GitHub. Required if `enable_pr_comments` is set to `true`."
+    github_token: # optional
+    # "Set the endorctl log level, see also `log_verbose`."
+    log_level: # optional, default is info
+    # "Set to `true` to enable verbose logging."
+    log_verbose: # optional
+    # "Set to the namespace of the project that you are working with."
+    namespace: 
+    # "Set to the name of a file to save results to. File name will be in the `results` output item. Default just writes to STDOUT."
+    output_file: # optional
+    # "Set to `false` to track this scan in Endor Labs as a release, as opposed to a point in time policy and finding test for a PR."
+    pr: # optional, default is true
+    # 'Set the baseline branch to enable action policies to only act on new findings.  Must be used together with `pr` Example: `pr_baseline: "main"`.'
+    pr_baseline: # optional
+    # "Set to `true` to report of CPU/RAM/time scan statistics via `time -v`; Linux runners only."
+    run_stats: # optional
+    # "Set to a location on your GitHub runner to output the findings in SARIF format."
+    sarif_file: # optional
+    # "Scan git commits and generate findings for all dependencies."
+    scan_dependencies: # optional, default is true
+    # "Scan source code repository for CI/CD tools."
+    scan_tools: # optional
+    # "Perform a more complete and detailed scan of secrets in the repository history.  Must be used together with `scan_secrets`."
+    scan_git_logs: # optional
+    # "Set to the path to scan. Defaults to the current working directory."
+    scan_path: # optional, default is .
+    # "Scan source code repository and generate findings for secrets. See also `scan_git_logs`."
+    scan_secrets: # optional
+    # "Set the desired output format to one of: `table`, `json`, `yaml`, or `summary`."
+    scan_summary_output_type: # optional, default is json
+    # "Specify a list of user-defined tags to add to this scan. Tags can be used to search and filter scans later."
+    tags: # optional
+    # "Enable the usage of Bazel for the scan."
+    use_bazel: # optional
+    # "Specify a a list of Bazel targets to exclude from scan."
+    bazel_exclude_targets: # optional
+    # "Specify a list of Bazel targets to scan. If `bazel_targets_include` is not set the `bazel_targets_query` value is used to determine with bazel targets to scan."
+    bazel_include_targets: # optional
+    # "Specify a Bazel query to determine with Bazel targets to scan. Ignored if `bazel_targets_include` is set."
+    bazel_targets_query: # optional
+    # "Enable phantom dependency analysis to identify dependencies used, but not declared in the manifest file."
+    phantom_dependencies: # optional
+
+                      - name: AI-based PR Reviewer & Summarizer with Chat Capabilities
+  # You may pin to the exact commit or the version.
+  # uses: coderabbitai/ai-pr-reviewer@44244a9e06f5acf72a93f661c7dbb8d8d808143d
+  uses: coderabbitai/ai-pr-reviewer@1.16.2
+  with:
+    # Enable debug mode
+    debug: # optional, default is false
+    # Max files to summarize and review. Less than or equal to 0 means no limit.
+    max_files: # optional, default is 150
+    # Review even when the changes are simple
+    review_simple_changes: # optional, default is false
+    # Leave comments even if the patch is LGTM
+    review_comment_lgtm: # optional, default is false
+    # The path filters, e.g., "src/**.py", "!dist/**", each line will be considered as one pattern.
+See also
+
+- https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
+- https://github.com/isaacs/minimatch
+
+    path_filters: # optional, default is !dist/**
+!**/*.app
+!**/*.bin
+!**/*.bz2
+!**/*.class
+!**/*.db
+!**/*.csv
+!**/*.tsv
+!**/*.dat
+!**/*.dll
+!**/*.dylib
+!**/*.egg
+!**/*.glif
+!**/*.gz
+!**/*.xz
+!**/*.zip
+!**/*.7z
+!**/*.rar
+!**/*.zst
+!**/*.ico
+!**/*.jar
+!**/*.tar
+!**/*.war
+!**/*.lo
+!**/*.log
+!**/*.mp3
+!**/*.wav
+!**/*.wma
+!**/*.mp4
+!**/*.avi
+!**/*.mkv
+!**/*.wmv
+!**/*.m4a
+!**/*.m4v
+!**/*.3gp
+!**/*.3g2
+!**/*.rm
+!**/*.mov
+!**/*.flv
+!**/*.iso
+!**/*.swf
+!**/*.flac
+!**/*.nar
+!**/*.o
+!**/*.ogg
+!**/*.otf
+!**/*.p
+!**/*.pdf
+!**/*.doc
+!**/*.docx
+!**/*.xls
+!**/*.xlsx
+!**/*.ppt
+!**/*.pptx
+!**/*.pkl
+!**/*.pickle
+!**/*.pyc
+!**/*.pyd
+!**/*.pyo
+!**/*.pub
+!**/*.pem
+!**/*.rkt
+!**/*.so
+!**/*.ss
+!**/*.eot
+!**/*.exe
+!**/*.pb.go
+!**/*.lock
+!**/*.ttf
+!**/*.yaml
+!**/*.yml
+!**/*.cfg
+!**/*.toml
+!**/*.ini
+!**/*.mod
+!**/*.sum
+!**/*.work
+!**/*.json
+!**/*.mmd
+!**/*.svg
+!**/*.jpeg
+!**/*.jpg
+!**/*.png
+!**/*.gif
+!**/*.bmp
+!**/*.tiff
+!**/*.webm
+!**/*.woff
+!**/*.woff2
+!**/*.dot
+!**/*.md5sum
+!**/*.wasm
+!**/*.snap
+!**/*.parquet
+!**/gen/**
+!**/_gen/**
+!**/generated/**
+!**/@generated/**
+!**/vendor/**
+!**/*.min.js
+!**/*.min.js.map
+!**/*.min.js.css
+!**/*.tfstate
+!**/*.tfstate.backup
+
+    # Only provide the summary and skip the code review.
+    disable_review: # optional, default is false
+    # Disable release notes
+    disable_release_notes: # optional, default is false
+    # The url of the openai api interface.
+    openai_base_url: # optional, default is https://api.openai.com/v1
+    # Model to use for simple tasks like summarizing diff on a file.
+    openai_light_model: # optional, default is gpt-3.5-turbo
+    # Model to use for complex tasks such as code reviews.
+    openai_heavy_model: # optional, default is gpt-4
+    # Temperature for GPT model
+    openai_model_temperature: # optional, default is 0.05
+    # How many times to retry OpenAI API in case of timeouts or errors?
+    openai_retries: # optional, default is 5
+    # Timeout for OpenAI API call in millis
+    openai_timeout_ms: # optional, default is 360000
+    # How many concurrent API calls to make to OpenAI servers?
+    openai_concurrency_limit: # optional, default is 6
+    # How many concurrent API calls to make to GitHub?
+    github_concurrency_limit: # optional, default is 6
+    # System message to be sent to OpenAI
+    system_message: # optional, default is You are `@coderabbitai` (aka `github-actions[bot]`), a language model 
+trained by OpenAI. Your purpose is to act as a highly experienced 
+software engineer and provide a thorough review of the code hunks
+and suggest code snippets to improve key areas such as:
+  - Logic
+  - Security
+  - Performance
+  - Data races
+  - Consistency
+  - Error handling
+  - Maintainability
+  - Modularity
+  - Complexity
+  - Optimization
+  - Best practices: DRY, SOLID, KISS
+
+Do not comment on minor code style issues, missing 
+comments/documentation. Identify and resolve significant 
+concerns to improve overall code quality while deliberately 
+disregarding minor issues.
+
+    # The prompt for final summarization response
+    summarize: # optional, default is Provide your final response in markdown with the following content:
+
+- **Walkthrough**: A high-level summary of the overall change instead of 
+  specific files within 80 words.
+- **Changes**: A markdown table of files and their summaries. Group files 
+  with similar changes together into a single row to save space.
+- **Poem**: Below the changes, include a whimsical, short poem written by 
+  a rabbit to celebrate the changes. Format the poem as a quote using 
+  the ">" symbol and feel free to use emojis where relevant.
+
+Avoid additional commentary as this summary will be added as a comment on the 
+GitHub pull request. Use the titles "Walkthrough" and "Changes" and they must be H2.
+
+    # The prompt for generating release notes in the same chat as summarize stage
+    summarize_release_notes: # optional, default is Craft concise release notes for the pull request. 
+Focus on the purpose and user impact, categorizing changes as "New Feature", "Bug Fix", 
+"Documentation", "Refactor", "Style", "Test", "Chore", or "Revert". Provide a bullet-point list, 
+e.g., "- New Feature: Added search functionality to the UI". Limit your response to 50-100 words 
+and emphasize features visible to the end-user while omitting code-level details.
+
+    # ISO code for the response language
+    language: # optional, default is en-US
+    # The icon for the bot
+    bot_icon: # optional, default is <img src="https://avatars.githubusercontent.com/in/347564?s=41" alt="Image description" width="20" height="20">
+          
+
+
+
+
+
+
+
+
