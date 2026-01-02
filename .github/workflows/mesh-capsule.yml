@@ -1,0 +1,45 @@
+name: 🜏 Mesh Capsule Ritual
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  invoke-capsule:
+    name: 🔮 Publish Capsule to IPFS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧬 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Set up IPFS CLI
+        run: |
+          curl -O https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_linux-amd64.tar.gz
+          tar -xvzf kubo_v0.18.1_linux-amd64.tar.gz
+          sudo mv kubo/ipfs /usr/local/bin/ipfs
+          ipfs --version
+
+      - name: 🧿 Initialize IPFS Repo
+        run: |
+          ipfs init
+          ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["https://dev.webui.ipfs.io"]'
+          ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST"]'
+
+      - name: 🧱 Start IPFS Daemon (Background)
+        run: |
+          nohup ipfs daemon & sleep 10
+
+      - name: 🧾 Run Capsule Publisher
+        run: bash publish-capsule.sh
+
+      - name: 🧪 Verify Capsule Seal
+        run: bash seal-verify.sh
+
+      - name: 🧠 Watchdog Daemon Check
+        run: bash watchdog.sh
+
+      - name: 🧬 Output DNSLink Record
+        run: |
+          echo "_dnslink.gateway.blackcorp.me. IN TXT \"dnslink=/ipns/k2k4r8k718tb83ip7itzggxa1puaousqg4vdiudwd9c2yrm4rmf01ix8\""0
